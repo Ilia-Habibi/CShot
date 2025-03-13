@@ -15,20 +15,16 @@ class PLAYER:
     def shot(self):
         screen.blit(self.bullet,self.aim)
 
-class MAIN:
-    def __init__(self):
-        self.BG = pygame.image.load('Graphics/game BG.jpg')
-        self.player1 = PLAYER(1)
-        self.player2 = PLAYER(2)
-
+class SCREEN:
+    def __init__(self, jpg_name):
+        self.jpj_name = pygame.image.load(jpg_name)
+    def draw_game_jpg(self):
+        screen.blit(self.jpj_name, (0, 0))
     def draw(self):
-        self.draw_game_BG()
-
-    def draw_game_BG(self):
-        screen.blit(self.BG,(0,0))
-
-main = MAIN()
+        self.draw_game_jpg()
+ 
 def menu():
+    main = SCREEN('Graphics/game BG.jpg')
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -38,9 +34,17 @@ def menu():
                 if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:  
                     pygame.quit()  
             main.draw()
-            mouse = pygame.mouse.get_pos()
-            screen.blit(text , (width/2+50,height/2))   
-            pygame.display.update()
-            clock.tick(60)
+        mouse = pygame.mouse.get_pos()
+        screen.blit(text , (width/2+50,height/2))
+        
+        if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:  
+            pygame.draw.rect(screen,Gold,[width/2,height/2,140,40])
+        else:  
+            pygame.draw.rect(screen,Gray,[width/2,height/2,140,40])
+        
+        screen.blit(text , (width/2+50,height/2)) 
+        pygame.display.update()
+        clock.tick(60)
+
 menu()
 
