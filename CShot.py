@@ -1,5 +1,5 @@
 import pygame,random
-from sys import exit
+import sys
 
 class PLAYER:
     def __init__(self):
@@ -21,9 +21,9 @@ class MAIN:
         screen.blit(self.BG,(0,0))
 
 
-# Initializing pygame and creaing a screen
+# Initializing pygame and creating a screen
 pygame.init()
-screen = pygame.display.set_mode((800,500))
+screen = pygame.display.set_mode((820,500))
 pygame.display.set_caption("CShot")
 clock = pygame.time.Clock()
 icon = pygame.image.load('Graphics/cshot icon.png')
@@ -35,7 +35,7 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            exit()
+            sys.exit()
 
     
     main.draw()
