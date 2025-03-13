@@ -22,13 +22,20 @@ class MAIN:
         screen.blit(self.BG,(0,0))
 
 main = MAIN()
+def menu():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:  
+                    pygame.quit()  
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-
-    main.draw()
-    pygame.display.update()
-    clock.tick(60)
+        main.draw()
+        mouse = pygame.mouse.get_pos()
+        screen.blit(text , (width/2+50,height/2))   
+        pygame.display.update()
+        clock.tick(60)
+        
+menu()
