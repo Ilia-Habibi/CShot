@@ -2,17 +2,23 @@ import pygame,random
 from sys import exit
 
 class PLAYER:
-    def __init__(self):
+    def __init__(self,player_no):
         self.randomize_aim()
+        self.bullet = pygame.image.load('Graphics/red.png') if player_no == 1 else pygame.image.load('Graphics/blue.png')
 
     def randomize_aim(self):
         self.x = random.randint(20,780)
         self.y = random.randint(80,480)
         self.aim = pygame.math.Vector2(self.x,self.y)
+    
+    def shot(self):
+        screen.blit(self.bullet,self.aim)
 
 class MAIN:
     def __init__(self):
         self.BG = pygame.image.load('Graphics/game BG.jpg')
+        self.player1 = PLAYER(1)
+        self.player2 = PLAYER(2)
 
     def draw(self):
         self.draw_game_BG()
@@ -23,7 +29,7 @@ class MAIN:
 
 # Initializing pygame and creaing a screen
 pygame.init()
-screen = pygame.display.set_mode((800,500))
+screen = pygame.display.set_mode((820,500))
 pygame.display.set_caption("CShot")
 clock = pygame.time.Clock()
 icon = pygame.image.load('Graphics/cshot icon.png')
@@ -36,6 +42,7 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+
 
     
     main.draw()
