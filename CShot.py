@@ -21,6 +21,7 @@ class MENU:
         self.font = font1
         self.items = ["PLAY", "CONTROLS", "LEADERBOARD", "QUIT"]
         self.selected_item = 0
+        self.page_flip = pygame.mixer.Sound('SFX/page flip.mp3')
 
     def draw(self):
         for i, item in enumerate(self.items):
@@ -41,6 +42,7 @@ class MENU:
             exit()
         else:
             main.page = self.selected_item + 1
+            self.page_flip.play()
 
 class MAIN:
     def __init__(self):
@@ -104,6 +106,7 @@ while True:
                 main.menu.select()
 
             main.draw_menu()
+
         elif main.page == 1:
             pass
         elif main.page == 2: 
