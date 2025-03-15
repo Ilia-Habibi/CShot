@@ -6,14 +6,16 @@ class PLAYER:
     def __init__(self,player_no):
         self.randomize_aim()
         self.bullet = pygame.image.load('Graphics/red.png') if player_no == 1 else pygame.image.load('Graphics/blue.png')
+        self.shot_bullets = []
 
     def randomize_aim(self):
         self.x = random.randint(20,800)
         self.y = random.randint(80,480)
         self.aim = pygame.math.Vector2(self.x,self.y)
     
-    def shot(self):
-        screen.blit(self.bullet,self.aim)
+    def draw_shot(self):
+        for i in self.shot_bullets:
+            screen.blit(self.bullet,i)
 
 class SCREEN:
     def __init__(self, jpg_name, x = 0, y = 0):
@@ -23,15 +25,16 @@ class SCREEN:
     def draw_game_jpg(self):
         screen.blit(self.jpj_name, (self.x, self.y))
     def draw(self):
-        self.draw_game_jpg()
- 
+        self.draw_game_jpg()   
+
 def play_game():
     screen = pygame.display.set_mode(res)
-    pygame.display.set_caption("CShot_play")    
+    pygame.display.set_caption("CShot_menu")
     clock = pygame.time.Clock()
     icon = pygame.image.load('Graphics/cshot icon.png')
     pygame.display.set_icon(icon)
     main = SCREEN('Graphics/game BG.jpg')
+    
     while True:
         mouse = pygame.mouse.get_pos()
         for event in pygame.event.get():
@@ -50,7 +53,6 @@ def play_game():
             pygame.draw.rect(screen, Gray, [30, 437, 80, 40])
             pygame.draw.rect(screen, Gold, [28, 435, 84, 44], 2)
         screen.blit(text_exit_play, (45, 440))
-        
         pygame.display.update()
         clock.tick(60)
 def menu():
@@ -106,5 +108,13 @@ def menu():
         pygame.display.update()
         clock.tick(60)
 
+            #    if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:  
+            #        pygame.quit()
+            #        sys.exit()
+            #if event.type == pygame.KEYDOWN:
+            #    if event.key == pygame.K_RETURN:
+            #        main.player1.shot_bullets.append(main.player1.aim.copy()) 
+            #    if event.key == pygame.K_SPACE:
+            #        main.player2.shot_bullets.append(main.player2.aim.copy())
 menu()
 
