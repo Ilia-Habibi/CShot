@@ -43,8 +43,7 @@ def play_game():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if 30 <= mouse[0] <= 110 and 437 <= mouse[1] <= 477:
-                    return
-                
+                    return        
         main.draw()
         if 30 <= mouse[0] <= 110 and 437 <= mouse[1] <= 477:
             pygame.draw.rect(screen, Red, [30, 437, 80, 40])
@@ -116,5 +115,6 @@ def menu():
             #        main.player1.shot_bullets.append(main.player1.aim.copy()) 
             #    if event.key == pygame.K_SPACE:
             #        main.player2.shot_bullets.append(main.player2.aim.copy())
+
 menu()
 
