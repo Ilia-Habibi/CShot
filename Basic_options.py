@@ -19,8 +19,10 @@ height = screen.get_height()
 
 font_1 = pygame.font.SysFont('timesnewroman',  45)
 font_2 = pygame.font.SysFont('timesnewroman',  40)
+font_3 = pygame.font.SysFont('timesnewroman',  30)
 # rendering a text written in  
 # this font  
 text_quit = font_1.render('Quit', True, Black)
 text_play = font_1.render('Play', True, Black)
 text_control = font_2.render('Control', True, Black)
+text_exit_play = font_3.render('Exit', True, Black)

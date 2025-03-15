@@ -25,19 +25,55 @@ class SCREEN:
     def draw(self):
         self.draw_game_jpg()
  
-def menu():
+def play_game():
+    screen = pygame.display.set_mode(res)
+    pygame.display.set_caption("CShot_play")    
+    clock = pygame.time.Clock()
+    icon = pygame.image.load('Graphics/cshot icon.png')
+    pygame.display.set_icon(icon)
     main = SCREEN('Graphics/game BG.jpg')
     while True:
+        mouse = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if 30 <= mouse[0] <= 110 and 437 <= mouse[1] <= 477:
+                    return
+                
+        main.draw()
+        if 30 <= mouse[0] <= 110 and 437 <= mouse[1] <= 477:
+            pygame.draw.rect(screen, Red, [30, 437, 80, 40])
+            pygame.draw.rect(screen, Black, [28, 435, 84, 44], 2)
+        else: 
+            pygame.draw.rect(screen, Gray, [30, 437, 80, 40])
+            pygame.draw.rect(screen, Gold, [28, 435, 84, 44], 2)
+        screen.blit(text_exit_play, (45, 440))
+        
+        pygame.display.update()
+        clock.tick(60)
+def menu():
+    screen = pygame.display.set_mode(res)
+    pygame.display.set_caption("CShot_menu")
+    clock = pygame.time.Clock()
+    icon = pygame.image.load('Graphics/cshot icon.png')
+    pygame.display.set_icon(icon)
+    main = SCREEN('Graphics/game BG.jpg')
+    
+    while True:
+        mouse = pygame.mouse.get_pos()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if width/2-80 <= mouse[0] <= width/2+70 and height/2+130 <= mouse[1] <= height/2+180:  
-                    pygame.quit()  
-            main.draw()
-        mouse = pygame.mouse.get_pos()
+                    pygame.quit()
+                if(width/2-80 <= mouse[0] <= width/2+70 and height/2-102 <= mouse[1] <= height/2-52):
+                    play_game() 
         
+        main.draw()        
         #show Quit 
         if width/2-50 <= mouse[0] <= width/2+50 and height/2+120 <= mouse[1] <= height/2+200:
             pygame.draw.ellipse(screen, Violet, (width/2-78, height/2+132, 150, 75))
