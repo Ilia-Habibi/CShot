@@ -9,8 +9,8 @@ class PLAYER:
         self.shot_bullets = []
 
     def randomize_aim(self):
-        self.x = random.randint(20,800)
-        self.y = random.randint(80,480)
+        self.x = random.randint(50,750)
+        self.y = random.randint(150,480)
         self.aim = pygame.math.Vector2(self.x,self.y)
     
     def draw_shot(self):
@@ -42,11 +42,6 @@ def menu():
                 if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:  
                     pygame.quit()
                     sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    main.player1.shot_bullets.append(main.player1.aim.copy()) 
-                if event.key == pygame.K_SPACE:
-                    main.player2.shot_bullets.append(main.player2.aim.copy())
 
             main.draw()
             mouse = pygame.mouse.get_pos()
@@ -55,3 +50,8 @@ def menu():
             clock.tick(60)
 menu()
 
+#           if event.type == pygame.KEYDOWN:
+#               if event.key == pygame.K_RETURN:
+#                   main.player1.shot_bullets.append(main.player1.aim.copy()) 
+#               if event.key == pygame.K_SPACE:
+#                  main.player2.shot_bullets.append(main.player2.aim.copy())
