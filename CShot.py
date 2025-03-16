@@ -16,12 +16,60 @@ class PLAYER:
         for i in self.shot_bullets:
             screen.blit(self.bullet,i)
 
+class CONTROLS:
+    def __init__(self):
+        self.enter = pygame.image.load("Graphics/enter.PNG")
+        self.arrows = pygame.image.load("Graphics/arrows.PNG")
+        self.wasd = pygame.image.load("Graphics/wasd.PNG")
+        self.space = pygame.image.load("Graphics/space.PNG")
+        self.font = font2
+        self.page_flip = page_flip
+        self.b_font = font1
+        self.b = self.b_font.render("BACK", True, ink_blue)
+        self.b_rect = self.b.get_rect(center=(width//2, 433))
+    
+    def draw(self):
+        p2 = self.font.render("player 2", True, ink_blue)
+        p2_rect = p2.get_rect(center=(136,120))
+        p2_move = self.font.render("move:", True, ink_blue)
+        p2_move_rect = p2_move.get_rect(center=(136,177))
+        p2_shoot = self.font.render("shoot:", True, ink_blue)
+        p2_shoot_rect = p2_shoot.get_rect(center=(136,273))
+        p1 = self.font.render("player 1", True, ink_red)
+        p1_rect = p1.get_rect(center=(536,120))
+        p1_move = self.font.render("move:", True, ink_red)
+        p1_move_rect = p1_move.get_rect(center=(536,273))
+        p1_shoot = self.font.render("shoot:", True, ink_red)
+        p1_shoot_rect = p1_shoot.get_rect(center=(536,177))
+        back = self.b_font.render("BACK", True, ink_blue)
+        back_rect = back.get_rect(center=(width//2, 433))
+        
+
+        if back_rect.collidepoint(mouse):
+            back = self.b_font.render("BACK", True, ink_red)
+
+        screen.blit(p2, p2_rect)
+        screen.blit(p2_move, p2_move_rect)
+        screen.blit(self.wasd, (150,165))
+        screen.blit(p2_shoot,p2_shoot_rect)
+        screen.blit(self.space, (136,295))
+        screen.blit(p1, p1_rect)
+        screen.blit(p1_move, p1_move_rect)
+        screen.blit(self.enter, (570,165))
+        screen.blit(p1_shoot,p1_shoot_rect)
+        screen.blit(self.arrows, (550,265))
+        screen.blit(back, back_rect)
+    
+    def back(self):
+        main.page = 0
+        self.page_flip.play()
+
 class MENU:
     def __init__(self):
         self.font = font1
         self.items = ["PLAY", "CONTROLS", "LEADERBOARD", "QUIT"]
         self.selected_item = 0
-        self.page_flip = pygame.mixer.Sound('SFX/page flip.mp3')
+        self.page_flip = page_flip
 
     def draw(self):
         for i, item in enumerate(self.items):
@@ -50,8 +98,13 @@ class MAIN:
         self.player1 = PLAYER(1)
         self.player2 = PLAYER(2)
         self.menu = MENU()
+        self.controls = CONTROLS()
         ### page numbers: 0 = menu , 1 = name input , 2 = controls , 3 = leaderboard , 4 = game 
         self.page = 0
+
+    def draw_controls(self):
+        self.draw_BG()
+        self.controls.draw()
 
     def draw_menu(self):
         self.draw_BG()
@@ -78,10 +131,14 @@ pygame.display.set_icon(icon)
 
 # fonts
 font1 = pygame.font.Font("Fonts/Notera.ttf",36)
+font2 = pygame.font.Font("Fonts/Scribble Markers.otf",36)
 
 # colors
 ink_blue = (0,51,102)
 ink_red = (204,0,0)
+
+# sounds
+page_flip = pygame.mixer.Sound('SFX/page flip.mp3')
 
 # main object 
 main = MAIN()
@@ -103,14 +160,24 @@ while True:
                     main.menu.select()
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                main.menu.select()
+                for i, item in enumerate(main.menu.items):
+                    text = main.menu.font.render(item, True, ink_blue)
+                    text_rect = text.get_rect(center=(width//2, 177+i*64))
+        
+                    if text_rect.collidepoint(mouse):
+                        main.menu.select()
 
             main.draw_menu()
 
         elif main.page == 1:
             pass
         elif main.page == 2: 
-            pass
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if main.controls.b_rect.collidepoint(mouse):
+                    main.controls.back()
+            
+            main.draw_controls()
+
         elif main.page == 3:
             pass
         elif main.page == 4:
