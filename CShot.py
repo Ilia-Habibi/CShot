@@ -92,6 +92,42 @@ class MENU:
             main.page = self.selected_item + 1
             self.page_flip.play()
 
+class MAIN_PLAY:
+    def __init__(self):
+        self.font = font2
+        self.page_flip = page_flip
+        self.b_font = font1
+        self.b = self.b_font.render("BACK", True, ink_blue)
+        self.b_rect = self.b.get_rect(center=(120, 433))
+        self.p1_input_rect = pygame.Rect(136,200,140,40)
+        self.p1_active = False
+        self.p1_text = ''
+        
+    def draw(self):
+        p2 = self.font.render("player 2:", True, ink_blue)
+        p2_rect = p2.get_rect(center=(136,280))
+        p1 = self.font.render("player 1:", True, ink_red)
+        p1_rect = p1.get_rect(center=(136,120))
+        p1_text_surface = self.font.render(self.p1_text, True, (255,255,255))
+        back = self.b_font.render("BACK", True, ink_blue)
+        back_rect = back.get_rect(center=(120, 433))
+
+        if back_rect.collidepoint(mouse):
+            back = self.b_font.render("BACK", True, ink_red)
+
+        screen.blit(p1_text_surface, self.p1_input_rect)
+        self.p1_input_rect.w = max(100, p1_text_surface.get_width() + 10)
+        screen.blit(p2, p2_rect)
+        screen.blit(p1, p1_rect)
+        screen.blit(back, back_rect)
+    
+    def text_input(self):
+        pass
+    
+    def back(self):
+        main.page = 0
+        self.page_flip.play()
+        
 class MAIN:
     def __init__(self):
         self.BG = pygame.image.load('Graphics/game BG.jpg')
@@ -99,12 +135,17 @@ class MAIN:
         self.player2 = PLAYER(2)
         self.menu = MENU()
         self.controls = CONTROLS()
+        self.main_play = MAIN_PLAY()
         ### page numbers: 0 = menu , 1 = name input , 2 = controls , 3 = leaderboard , 4 = game 
         self.page = 0
 
     def draw_controls(self):
         self.draw_BG()
         self.controls.draw()
+        
+    def draw_main_play(self):
+        self.draw_BG()
+        self.main_play.draw()
 
     def draw_menu(self):
         self.draw_BG()
@@ -170,7 +211,21 @@ while True:
             main.draw_menu()
 
         elif main.page == 1:
-            pass
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if main.main_play.b_rect.collidepoint(mouse):
+                    main.main_play.back()
+                if main.main_play.p1_input_rect.collidepoint(event.pos):
+                    main.main_play.p1_active = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main.main_play.back()
+                if main.main_play.p1_active == True:
+                    if event.key == pygame.K_BACKSPACE:
+                        main.main_play.p1_text = user_text[:-1]
+                    else:
+                        user_text += event.unicode
+            main.draw_main_play()
+                    
         elif main.page == 2: 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if main.controls.b_rect.collidepoint(mouse):
