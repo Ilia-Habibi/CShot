@@ -175,6 +175,9 @@ while True:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if main.controls.b_rect.collidepoint(mouse):
                     main.controls.back()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main.controls.back()
             
             main.draw_controls()
 
