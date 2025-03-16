@@ -99,31 +99,42 @@ class MAIN_PLAY:
         self.b_font = font1
         self.b = self.b_font.render("BACK", True, ink_blue)
         self.b_rect = self.b.get_rect(center=(120, 433))
-        self.p1_input_rect = pygame.Rect(136,200,140,40)
+        self.p1_input_rect = pygame.Rect(240,106,120,50)
         self.p1_active = False
         self.p1_text = ''
+        self.p2_input_rect = pygame.Rect(240,267,120,50)
+        self.p2_active = False
+        self.p2_text = ''
         
     def draw(self):
         p2 = self.font.render("player 2:", True, ink_blue)
-        p2_rect = p2.get_rect(center=(136,280))
+        p2_rect = p2.get_rect(center=(136,300))
+        p2_text_surface = self.font.render(self.p2_text, True, "black")
         p1 = self.font.render("player 1:", True, ink_red)
-        p1_rect = p1.get_rect(center=(136,120))
-        p1_text_surface = self.font.render(self.p1_text, True, (255,255,255))
+        p1_rect = p1.get_rect(center=(136,135))
+        p1_text_surface = self.font.render(self.p1_text, True, "black")
         back = self.b_font.render("BACK", True, ink_blue)
         back_rect = back.get_rect(center=(120, 433))
 
         if back_rect.collidepoint(mouse):
             back = self.b_font.render("BACK", True, ink_red)
-
+            
         screen.blit(p1_text_surface, self.p1_input_rect)
-        self.p1_input_rect.w = max(100, p1_text_surface.get_width() + 10)
+        screen.blit(p2_text_surface, self.p2_input_rect)
+        self.p1_input_rect.w = max(180, p1_text_surface.get_width() + 10)
+        self.p2_input_rect.w = max(180, p2_text_surface.get_width() + 10)
         screen.blit(p2, p2_rect)
         screen.blit(p1, p1_rect)
         screen.blit(back, back_rect)
-    
-    def text_input(self):
-        pass
-    
+        if self.p1_active:
+            pygame.draw.rect(screen, "dark green", self.p1_input_rect, 2)
+        else:
+            pygame.draw.rect(screen, ink_red, self.p1_input_rect, 2)
+        if self.p2_active:
+            pygame.draw.rect(screen, "dark green", self.p2_input_rect, 2)
+        else:
+            pygame.draw.rect(screen, ink_blue, self.p2_input_rect, 2)
+            
     def back(self):
         main.page = 0
         self.page_flip.play()
@@ -214,16 +225,27 @@ while True:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if main.main_play.b_rect.collidepoint(mouse):
                     main.main_play.back()
-                if main.main_play.p1_input_rect.collidepoint(event.pos):
+                if main.main_play.p1_input_rect.collidepoint(mouse):
                     main.main_play.p1_active = True
+                if main.main_play.p2_input_rect.collidepoint(mouse):
+                    main.main_play.p2_active = True
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    main.main_play.back()
+                        main.main_play.back()
                 if main.main_play.p1_active == True:
-                    if event.key == pygame.K_BACKSPACE:
-                        main.main_play.p1_text = user_text[:-1]
+                    if event.key == pygame.K_RETURN:
+                        main.main_play.p1_active = False
+                    elif event.key == pygame.K_BACKSPACE:
+                        main.main_play.p1_text = main.main_play.p1_text[:-1]
                     else:
-                        user_text += event.unicode
+                        main.main_play.p1_text += event.unicode
+                if main.main_play.p2_active == True:
+                    if event.key == pygame.K_RETURN:
+                        main.main_play.p2_active = False
+                    elif event.key == pygame.K_BACKSPACE:
+                        main.main_play.p2_text = main.main_play.p2_text[:-1]
+                    else:
+                        main.main_play.p2_text += event.unicode
             main.draw_main_play()
                     
         elif main.page == 2: 
