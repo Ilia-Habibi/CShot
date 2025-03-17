@@ -99,6 +99,9 @@ class MAIN_PLAY:
         self.b_font = font1
         self.b = self.b_font.render("BACK", True, ink_blue)
         self.b_rect = self.b.get_rect(center=(120, 433))
+        self.n_font = font1
+        self.n = self.n_font.render("NEXT", True, ink_blue)
+        self.n_rect = self.n.get_rect(center=(700, 433))
         self.p1_input_rect = pygame.Rect(240,106,120,50)
         self.p1_active = False
         self.p1_text = ''
@@ -115,9 +118,13 @@ class MAIN_PLAY:
         p1_text_surface = self.font.render(self.p1_text, True, "black")
         back = self.b_font.render("BACK", True, ink_blue)
         back_rect = back.get_rect(center=(120, 433))
+        next = self.n_font.render("NEXT", True, ink_blue)
+        next_rect = next.get_rect(center=(700, 433))
 
         if back_rect.collidepoint(mouse):
             back = self.b_font.render("BACK", True, ink_red)
+        if next_rect.collidepoint(mouse) and self.p1_text != '' and self.p2_text != '':
+            next = self.n_font.render("NEXT", True, ink_red)
             
         screen.blit(p1_text_surface, self.p1_input_rect)
         screen.blit(p2_text_surface, self.p2_input_rect)
@@ -126,6 +133,7 @@ class MAIN_PLAY:
         screen.blit(p2, p2_rect)
         screen.blit(p1, p1_rect)
         screen.blit(back, back_rect)
+        screen.blit(next, next_rect)
         if self.p1_active:
             pygame.draw.rect(screen, "dark green", self.p1_input_rect, 2)
         else:
@@ -137,7 +145,13 @@ class MAIN_PLAY:
             
     def back(self):
         main.page = 0
+        main.main_play = MAIN_PLAY()
         self.page_flip.play()
+    def next(self):
+        if self.p1_text != '' and self.p2_text != '':
+            main.page = 0
+            main.main_play = MAIN_PLAY()
+            self.page_flip.play()
         
 class MAIN:
     def __init__(self):
@@ -225,16 +239,24 @@ while True:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if main.main_play.b_rect.collidepoint(mouse):
                     main.main_play.back()
+                if main.main_play.n_rect.collidepoint(mouse):
+                    main.main_play.next()
                 if main.main_play.p1_input_rect.collidepoint(mouse):
                     main.main_play.p1_active = True
+                else:
+                    main.main_play.p1_active = False
                 if main.main_play.p2_input_rect.collidepoint(mouse):
                     main.main_play.p2_active = True
+                else:
+                    main.main_play.p2_active = False
+            
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                         main.main_play.back()
                 if main.main_play.p1_active == True:
                     if event.key == pygame.K_RETURN:
                         main.main_play.p1_active = False
+                        main.main_play.p2_active = True
                     elif event.key == pygame.K_BACKSPACE:
                         main.main_play.p1_text = main.main_play.p1_text[:-1]
                     else:
