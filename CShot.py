@@ -149,10 +149,54 @@ class MAIN_PLAY:
         self.page_flip.play()
     def next(self):
         if self.p1_text != '' and self.p2_text != '':
-            main.page = 0
+            main.page = 4
             main.main_play = MAIN_PLAY()
             self.page_flip.play()
         
+class PLAY_GAME:
+    def __init__(self):
+        self.page_flip = page_flip
+        self.b_font = font1
+        self.b = self.b_font.render("EXIT", True, ink_blue)
+        self.b_rect = self.b.get_rect(center=(120, 433))
+        
+        self.p1_font = font3
+        self.p1_score = self.p1_font.render("PLAYER 1 SCORE:", True, ink_red)
+        self.p1_score_rect = self.p1_score.get_rect(center=(100, 100))
+        self.p1_shot = self.p1_font.render("PLAYER 1 SHOT:", True, ink_red)
+        self.p1_shot_rect = self.p1_shot.get_rect(center=(680, 100)) 
+        
+        self.p2_font = font3
+        self.p2_score = self.p2_font.render("PLAYER 2 SCORE:", True, ink_blue)
+        self.p2_score_rect = self.p2_score.get_rect(center=(100, 125))
+        self.p2_shot = self.p2_font.render("PLAYER 2 SHOT:", True, ink_blue)
+        self.p2_shot_rect = self.p2_shot.get_rect(center=(680, 125)) 
+        
+    def draw(self):
+        back = self.b_font.render("EXIT", True, ink_blue)
+        back_rect = back.get_rect(center=(120, 433))
+        player1_score = self.p1_font.render("PLAYER 1 SCORE:", True, ink_red)
+        player1_score_rect = player1_score.get_rect(center=(100, 100))
+        player1_shot = self.p1_font.render("PLAYER 1 SHOT:", True, ink_red)
+        player1_shot_rect = player1_shot.get_rect(center=(680, 100))
+        
+        player2_score = self.p2_font.render("PLAYER 2 SCORE:", True, ink_blue)
+        player2_score_rect = player2_score.get_rect(center=(100, 125))
+        player2_shot = self.p2_font.render("PLAYER 2 SHOT:", True, ink_blue)
+        player2_shot_rect = player2_shot.get_rect(center=(680, 125))
+        
+        if back_rect.collidepoint(mouse):
+            back = self.b_font.render("EXIT", True, ink_red)
+        screen.blit(back, back_rect)
+        screen.blit(player1_score, player1_score_rect)
+        screen.blit(player2_score, player2_score_rect)
+        screen.blit(player1_shot, player1_shot_rect)
+        screen.blit(player2_shot, player2_shot_rect)
+    def back(self):
+        main.page = 1
+        main.main_play = MAIN_PLAY()
+        self.page_flip.play()
+
 class MAIN:
     def __init__(self):
         self.BG = pygame.image.load('Graphics/game BG.jpg')
@@ -161,8 +205,15 @@ class MAIN:
         self.menu = MENU()
         self.controls = CONTROLS()
         self.main_play = MAIN_PLAY()
+        self.play_game = PLAY_GAME()
         ### page numbers: 0 = menu , 1 = name input , 2 = controls , 3 = leaderboard , 4 = game 
         self.page = 0
+
+    def play(self):
+        self.draw_BG()
+        self.play_game.draw()
+        self.player1.draw_shot()
+        self.player2.draw_shot()
 
     def draw_controls(self):
         self.draw_BG()
@@ -179,10 +230,10 @@ class MAIN:
     def draw_BG(self):
         screen.blit(self.BG, (0,0))
 
-    def draw_game(self):
-        self.draw_BG()
-        self.player1.draw_shot()
-        self.player2.draw_shot()  
+    #def draw_game(self):
+    #    self.draw_BG()
+    #    self.player1.draw_shot()
+    #    self.player2.draw_shot()  
 
     
 # Initializing pygame and creating a screen
@@ -198,6 +249,7 @@ pygame.display.set_icon(icon)
 # fonts
 font1 = pygame.font.Font("Fonts/Notera.ttf",36)
 font2 = pygame.font.Font("Fonts/Scribble Markers.otf",36)
+font3 = pygame.font.Font("Fonts/Scribble Markers.otf",15)
 
 # colors
 ink_blue = (0,51,102)
@@ -256,7 +308,6 @@ while True:
                 if main.main_play.p1_active == True:
                     if event.key == pygame.K_RETURN:
                         main.main_play.p1_active = False
-                        main.main_play.p2_active = True
                     elif event.key == pygame.K_BACKSPACE:
                         main.main_play.p1_text = main.main_play.p1_text[:-1]
                     else:
@@ -277,7 +328,6 @@ while True:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main.controls.back()
-            
             main.draw_controls()
 
         elif main.page == 3:
@@ -288,9 +338,16 @@ while True:
                     main.player1.shot_bullets.append(main.player1.aim.copy()) 
                 if event.key == pygame.K_SPACE:
                     main.player2.shot_bullets.append(main.player2.aim.copy())
+                    
+                    
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if main.play_game.b_rect.collidepoint(mouse):
+                    main.play_game.back()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main.play_game.back()
+            main.play()
             
-            main.draw_game()
-
 
     pygame.display.update()
     clock.tick(60)
