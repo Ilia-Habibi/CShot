@@ -92,6 +92,7 @@ class MENU:
             main.page = self.selected_item + 1
             self.page_flip.play()
 
+# player name input page
 class MAIN_PLAY:
     def __init__(self):
         self.font = font2
@@ -104,18 +105,18 @@ class MAIN_PLAY:
         self.n_rect = self.n.get_rect(center=(700, 433))
         self.p1_input_rect = pygame.Rect(240,106,120,50)
         self.p1_active = False
-        self.p1_text = ''
         self.p2_input_rect = pygame.Rect(240,267,120,50)
         self.p2_active = False
-        self.p2_text = ''
+        self.reset()
+        
         
     def draw(self):
         p2 = self.font.render("player 2:", True, ink_blue)
         p2_rect = p2.get_rect(center=(136,300))
-        p2_text_surface = self.font.render(self.p2_text, True, "black")
+        p2_text_surface = self.font.render(p2_name, True, ink_blue)
         p1 = self.font.render("player 1:", True, ink_red)
         p1_rect = p1.get_rect(center=(136,135))
-        p1_text_surface = self.font.render(self.p1_text, True, "black")
+        p1_text_surface = self.font.render(p1_name, True, ink_red)
         back = self.b_font.render("BACK", True, ink_blue)
         back_rect = back.get_rect(center=(120, 433))
         next = self.n_font.render("NEXT", True, ink_blue)
@@ -123,7 +124,7 @@ class MAIN_PLAY:
 
         if back_rect.collidepoint(mouse):
             back = self.b_font.render("BACK", True, ink_red)
-        if next_rect.collidepoint(mouse) and self.p1_text != '' and self.p2_text != '':
+        if next_rect.collidepoint(mouse) and p1_name != '' and p2_name != '':
             next = self.n_font.render("NEXT", True, ink_red)
             
         screen.blit(p1_text_surface, self.p1_input_rect)
@@ -145,13 +146,19 @@ class MAIN_PLAY:
             
     def back(self):
         main.page = 0
-        main.main_play = MAIN_PLAY()
+        main.main_play.reset()
         self.page_flip.play()
+
     def next(self):
-        if self.p1_text != '' and self.p2_text != '':
+        if p1_name != '' and p2_name != '':
             main.page = 4
-            main.main_play = MAIN_PLAY()
             self.page_flip.play()
+
+    def reset(self):
+        global p1_name
+        global p2_name
+        p1_name = ''
+        p2_name = ''
         
 class PLAY_GAME:
     def __init__(self):
@@ -161,40 +168,32 @@ class PLAY_GAME:
         self.b_rect = self.b.get_rect(center=(120, 433))
         
         self.p1_font = font3
-        self.p1_score = self.p1_font.render("PLAYER 1 SCORE:", True, ink_red)
+        self.p1_score = self.p1_font.render(f"{p1_name} SCORE:", True, ink_red)
         self.p1_score_rect = self.p1_score.get_rect(center=(100, 100))
-        self.p1_shot = self.p1_font.render("PLAYER 1 SHOT:", True, ink_red)
+        self.p1_shot = self.p1_font.render(f"{p1_name} BULLETS:", True, ink_red)
         self.p1_shot_rect = self.p1_shot.get_rect(center=(680, 100)) 
         
         self.p2_font = font3
-        self.p2_score = self.p2_font.render("PLAYER 2 SCORE:", True, ink_blue)
+        self.p2_score = self.p2_font.render(f"{p2_name} SCORE:", True, ink_blue)
         self.p2_score_rect = self.p2_score.get_rect(center=(100, 125))
-        self.p2_shot = self.p2_font.render("PLAYER 2 SHOT:", True, ink_blue)
+        self.p2_shot = self.p2_font.render(f"{p2_name} BULLETS:", True, ink_blue)
         self.p2_shot_rect = self.p2_shot.get_rect(center=(680, 125)) 
         
     def draw(self):
         back = self.b_font.render("EXIT", True, ink_blue)
         back_rect = back.get_rect(center=(120, 433))
-        player1_score = self.p1_font.render("PLAYER 1 SCORE:", True, ink_red)
-        player1_score_rect = player1_score.get_rect(center=(100, 100))
-        player1_shot = self.p1_font.render("PLAYER 1 SHOT:", True, ink_red)
-        player1_shot_rect = player1_shot.get_rect(center=(680, 100))
-        
-        player2_score = self.p2_font.render("PLAYER 2 SCORE:", True, ink_blue)
-        player2_score_rect = player2_score.get_rect(center=(100, 125))
-        player2_shot = self.p2_font.render("PLAYER 2 SHOT:", True, ink_blue)
-        player2_shot_rect = player2_shot.get_rect(center=(680, 125))
         
         if back_rect.collidepoint(mouse):
             back = self.b_font.render("EXIT", True, ink_red)
         screen.blit(back, back_rect)
-        screen.blit(player1_score, player1_score_rect)
-        screen.blit(player2_score, player2_score_rect)
-        screen.blit(player1_shot, player1_shot_rect)
-        screen.blit(player2_shot, player2_shot_rect)
+        screen.blit(self.p1_score, self.p1_score_rect)
+        screen.blit(self.p2_score, self.p2_score_rect)
+        screen.blit(self.p1_shot, self.p1_shot_rect)
+        screen.blit(self.p2_shot, self.p2_shot_rect)
+
     def back(self):
         main.page = 1
-        main.main_play = MAIN_PLAY()
+        main.main_play.reset()
         self.page_flip.play()
 
 class MAIN:
@@ -208,12 +207,6 @@ class MAIN:
         self.play_game = PLAY_GAME()
         ### page numbers: 0 = menu , 1 = name input , 2 = controls , 3 = leaderboard , 4 = game 
         self.page = 0
-
-    def play(self):
-        self.draw_BG()
-        self.play_game.draw()
-        self.player1.draw_shot()
-        self.player2.draw_shot()
 
     def draw_controls(self):
         self.draw_BG()
@@ -230,10 +223,11 @@ class MAIN:
     def draw_BG(self):
         screen.blit(self.BG, (0,0))
 
-    #def draw_game(self):
-    #    self.draw_BG()
-    #    self.player1.draw_shot()
-    #    self.player2.draw_shot()  
+    def draw_game(self):
+        self.draw_BG()
+        self.play_game.draw()
+        self.player1.draw_shot()
+        self.player2.draw_shot()  
 
     
 # Initializing pygame and creating a screen
@@ -260,6 +254,9 @@ page_flip = pygame.mixer.Sound('SFX/page flip.mp3')
 
 # main object 
 main = MAIN()
+
+p1_name = ''
+p2_name = ''
     
 while True:
     mouse = pygame.mouse.get_pos()
@@ -309,16 +306,16 @@ while True:
                     if event.key == pygame.K_RETURN:
                         main.main_play.p1_active = False
                     elif event.key == pygame.K_BACKSPACE:
-                        main.main_play.p1_text = main.main_play.p1_text[:-1]
+                        p1_name = p1_name[:-1]
                     else:
-                        main.main_play.p1_text += event.unicode
+                        p1_name += event.unicode
                 if main.main_play.p2_active == True:
                     if event.key == pygame.K_RETURN:
                         main.main_play.p2_active = False
                     elif event.key == pygame.K_BACKSPACE:
-                        main.main_play.p2_text = main.main_play.p2_text[:-1]
+                        p2_name = p2_name[:-1]
                     else:
-                        main.main_play.p2_text += event.unicode
+                        p2_name += event.unicode
             main.draw_main_play()
                     
         elif main.page == 2: 
@@ -346,7 +343,7 @@ while True:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main.play_game.back()
-            main.play()
+            main.draw_game()
             
 
     pygame.display.update()
