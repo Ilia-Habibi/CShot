@@ -127,8 +127,8 @@ class MAIN_PLAY:
         if next_rect.collidepoint(mouse) and p1_name != '' and p2_name != '':
             next = self.n_font.render("NEXT", True, ink_red)
             
-        screen.blit(p1_text_surface, self.p1_input_rect)
-        screen.blit(p2_text_surface, self.p2_input_rect)
+        screen.blit(p1_text_surface, pygame.Rect(243,115,120,50))
+        screen.blit(p2_text_surface, pygame.Rect(243,276,120,50))
         self.p1_input_rect.w = max(180, p1_text_surface.get_width() + 10)
         self.p2_input_rect.w = max(180, p2_text_surface.get_width() + 10)
         screen.blit(p2, p2_rect)
@@ -163,28 +163,30 @@ class MAIN_PLAY:
 class PLAY_GAME:
     def __init__(self):
         self.page_flip = page_flip
-        self.b_font = font1
+        self.b_font = font3
         self.b = self.b_font.render("EXIT", True, ink_blue)
-        self.b_rect = self.b.get_rect(center=(120, 433))
+        self.b_rect = self.b.get_rect(center=(30, 50))
         
         self.p1_font = font3
-        self.p1_score = self.p1_font.render(f"{p1_name} SCORE:", True, ink_red)
-        self.p1_score_rect = self.p1_score.get_rect(center=(100, 100))
-        self.p1_shot = self.p1_font.render(f"{p1_name} BULLETS:", True, ink_red)
-        self.p1_shot_rect = self.p1_shot.get_rect(center=(680, 100)) 
+        self.p1_score = self.p1_font.render("PLAYER 1 SCORE:", True, ink_red)
+        self.p1_score_rect = self.p1_score.get_rect(center=(110, 100))
+        self.p1_shot = self.p1_font.render("PLAYER 1 BULLETS:", True, ink_red)
+        self.p1_shot_rect = self.p1_shot.get_rect(center=(670, 100)) 
         
         self.p2_font = font3
-        self.p2_score = self.p2_font.render(f"{p2_name} SCORE:", True, ink_blue)
-        self.p2_score_rect = self.p2_score.get_rect(center=(100, 125))
-        self.p2_shot = self.p2_font.render(f"{p2_name} BULLETS:", True, ink_blue)
-        self.p2_shot_rect = self.p2_shot.get_rect(center=(680, 125)) 
+        self.p2_score = self.p2_font.render("PLAYER 2 SCORE:", True, ink_blue)
+        self.p2_score_rect = self.p2_score.get_rect(center=(110, 125))
+        self.p2_shot = self.p2_font.render("PLAYER 2 BULLETS:", True, ink_blue)
+        self.p2_shot_rect = self.p2_shot.get_rect(center=(670, 125)) 
         
     def draw(self):
         back = self.b_font.render("EXIT", True, ink_blue)
-        back_rect = back.get_rect(center=(120, 433))
+        back_rect = back.get_rect(center=(30, 50))
         
+        pygame.draw.ellipse(screen, ink_blue, (5, 35, 50, 30), 2)
         if back_rect.collidepoint(mouse):
             back = self.b_font.render("EXIT", True, ink_red)
+            pygame.draw.ellipse(screen, ink_red, (5, 35, 50, 30), 2)
         screen.blit(back, back_rect)
         screen.blit(self.p1_score, self.p1_score_rect)
         screen.blit(self.p2_score, self.p2_score_rect)
