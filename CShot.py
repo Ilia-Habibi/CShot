@@ -279,6 +279,7 @@ ink_red = (204,0,0)
 page_flip = pygame.mixer.Sound('SFX/page flip.mp3')
 gun_shot = pygame.mixer.Sound('SFX/gun-shot.mp3')
 empty_gun_shot = pygame.mixer.Sound('SFX/empty gun shot.mp3')
+error_sound = pygame.mixer.Sound('SFX/error sound.mp3')
 
 # main object 
 main = MAIN()
@@ -375,21 +376,37 @@ while True:
                         empty_gun_shot.play()
                     
                 if event.key == pygame.K_d:
+                    if main.player2.aim.x+10 > 750:
+                        error_sound.play()
                     main.player2.aim.x = min(main.player2.aim.x+10, 750)
                 if event.key == pygame.K_a:
+                    if main.player2.aim.x-10 < 50:
+                        error_sound.play()
                     main.player2.aim.x = max(main.player2.aim.x-10, 50)
                 if event.key == pygame.K_w:
+                    if main.player2.aim.y-10 < 150:
+                        error_sound.play()
                     main.player2.aim.y = max(main.player2.aim.y-10, 150)
                 if event.key == pygame.K_s:
+                    if main.player2.aim.y+10 > 465:
+                        error_sound.play()
                     main.player2.aim.y = min(main.player2.aim.y+10, 465)
                     
                 if event.key == pygame.K_RIGHT:
+                    if main.player1.aim.x+10 > 750:
+                        error_sound.play()
                     main.player1.aim.x = min(main.player1.aim.x+10, 750) 
                 if event.key == pygame.K_LEFT:
+                    if main.player1.aim.x-10 < 50:
+                        error_sound.play()
                     main.player1.aim.x = max(main.player1.aim.x-10, 50)
                 if event.key == pygame.K_UP:
+                    if main.player1.aim.y-10 < 150:
+                        error_sound.play()
                     main.player1.aim.y = max(main.player1.aim.y-10, 150)
                 if event.key == pygame.K_DOWN:
+                    if main.player1.aim.y+10 > 465:
+                        error_sound.play()
                     main.player1.aim.y = min(main.player1.aim.y+10, 465)
                     
                     
