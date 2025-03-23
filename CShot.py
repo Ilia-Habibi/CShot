@@ -167,6 +167,7 @@ class PLAY_GAME:
     player2_number_score = 0
     def __init__(self):
         self.page_flip = page_flip
+        self.win_sound = win_sound
         self.b_font = font3
         self.b = self.b_font.render("EXIT", True, ink_blue)
         self.b_rect = self.b.get_rect(center=(30, 50))
@@ -230,11 +231,59 @@ class PLAY_GAME:
         self.player2_number_bullet = 20
         self.player1_number_score = 0
         self.player2_number_score = 0
-        self.page_flip.play()
+        self.win_sound.play()
 
 class END_GAME:
+    def __init__(self):
+        self.page_flip = page_flip
+        self.b_font = font1
+        self.b = self.b_font.render("MENU", True, "gold")
+        self.b_rect = self.b.get_rect(center=(230, 433))
+        self.n_font = font1
+        self.n = self.n_font.render("EXIT", True, "gold")
+        self.n_rect = self.n.get_rect(center=(590, 433))
+        self.w_font = font2
+        if winner_bool == 1:     
+            self.winner = self.w_font.render("PLAYER1 WIIIIIN", True, ink_red)
+            self.result_rect = self.winner.get_rect(center=(335, 205))
+        elif winner_bool == 2:
+            self.winner = self.w_font.render("PLAYER2 WIIIIIN", True, ink_blue)
+            self.result_rect = self.winner.get_rect(center=(335, 205))
+        else:
+            self.winner = self.w_font.render("Draw :)", True, "dark green")
+            self.result_rect = self.winner.get_rect(center=(410, 205))
+        
+        
     def draw(self):
-        x = 10
+        back = self.b_font.render("MENU", True, "gold")
+        back_rect = back.get_rect(center=(230, 433))
+        next = self.n_font.render("EXIT", True, "gold")
+        next_rect = next.get_rect(center=(590, 433))
+        if winner_bool == 1:     
+            winner = self.w_font.render("PLAYER1 WIIIIIN", True, ink_red)
+            result_rect = self.winner.get_rect(center=(335, 205))
+        elif winner_bool == 2:
+            winner = self.w_font.render("PLAYER2 WIIIIIN", True, ink_blue)
+            result_rect = self.winner.get_rect(center=(335, 205))
+        else:
+            winner = self.w_font.render("Draw :)", True, "dark green")
+            result_rect = self.winner.get_rect(center=(410, 205))
+
+        if back_rect.collidepoint(mouse):
+            back = self.b_font.render("MENU", True, ink_red)
+        if next_rect.collidepoint(mouse):
+            next = self.n_font.render("EXIT", True, ink_red)
+    
+        screen.blit(back, back_rect)
+        screen.blit(next, next_rect)
+        screen.blit(winner, result_rect)
+    def menu(self):
+        main.page = 0
+        main.end_game = END_GAME()
+        page_flip.play()
+    def exit(self):
+        pygame.quit()
+        exit()
         
 class MAIN:
     def __init__(self):
@@ -274,7 +323,9 @@ class MAIN:
         self.draw_BG()
         self.end_game.draw()
 
-    
+p1_name = ""
+p2_name = ""
+winner_bool = 0
 # Initializing pygame and creating a screen
 pygame.init()
 width = 820
@@ -299,13 +350,10 @@ page_flip = pygame.mixer.Sound('SFX/page flip.mp3')
 gun_shot = pygame.mixer.Sound('SFX/gun-shot.mp3')
 empty_gun_shot = pygame.mixer.Sound('SFX/empty gun shot.mp3')
 error_sound = pygame.mixer.Sound('SFX/error sound.mp3')
+win_sound = pygame.mixer.Sound('SFX/level win.mp3')
 
 # main object 
 main = MAIN()
-
-p1_name = ''
-p2_name = ''
-winner = 0
     
 while True:
     mouse = pygame.mouse.get_pos()
@@ -380,14 +428,6 @@ while True:
             pass
         
         elif main.page == 4:
-            if main.play_game.player1_number_bullet == 0 and main.play_game.player2_number_bullet == 0:
-                if main.play_game.player1_number_score > main.play_game.player2_number_score:
-                    winner = 1
-                elif main.play_game.player1_number_score < main.play_game.player2_number_score:
-                    winner = 2
-                else:
-                    winner = 0
-                main.play_game.next()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     if main.play_game.player1_number_bullet > 0:
@@ -438,19 +478,34 @@ while True:
                         error_sound.play()
                     main.player1.aim.y = min(main.player1.aim.y+10, 465)
                     
-                    
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if main.play_game.b_rect.collidepoint(mouse):
                     main.play_game.back()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     main.play_game.back()
+
+            if main.play_game.player1_number_bullet == 0 and main.play_game.player2_number_bullet == 0:
+                if main.play_game.player1_number_score > main.play_game.player2_number_score:
+                    winner_bool = 1
+                elif main.play_game.player1_number_score < main.play_game.player2_number_score:
+                    winner_bool = 2
+                else:
+                    winner_bool = 0
+                main.play_game.next()
             main.draw_game()
             
         elif main.page == 5:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if main.end_game.b_rect.collidepoint(mouse):
+                    main.end_game.menu()
+                if main.end_game.n_rect.collidepoint(mouse):
+                    main.end_game.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main.end_game.menu()
             main.draw_end_game()
             
-
     pygame.display.update()
     clock.tick(60)
 
