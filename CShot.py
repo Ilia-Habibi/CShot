@@ -163,6 +163,8 @@ class MAIN_PLAY:
 class PLAY_GAME:
     player1_number_bullet = 20
     player2_number_bullet = 20
+    player1_number_score = 0
+    player2_number_score = 0
     def __init__(self):
         self.page_flip = page_flip
         self.b_font = font3
@@ -201,6 +203,13 @@ class PLAY_GAME:
         p2_number_shot = self.p2_font.render(str(self.player2_number_bullet), True, "black")
         p2_number_shot_rect = p2_number_shot.get_rect(center=(750, 125))
         screen.blit(p2_number_shot, p2_number_shot_rect)
+        
+        p1_number_score = self.p1_font.render(str(self.player1_number_score), True, "black")
+        p1_number_score_rect = p1_number_score.get_rect(center=(180, 100))
+        screen.blit(p1_number_score, p1_number_score_rect)
+        p2_number_score = self.p2_font.render(str(self.player2_number_score), True, "black")
+        p2_number_score_rect = p2_number_score.get_rect(center=(180, 125))
+        screen.blit(p2_number_score, p2_number_score_rect)
 
     def back(self):
         main.page = 1
@@ -209,6 +218,8 @@ class PLAY_GAME:
         main.player2.shot_bullets.clear()
         self.player1_number_bullet = 20
         self.player2_number_bullet = 20
+        self.player1_number_score = 0
+        self.player2_number_score = 0
         self.page_flip.play()
 
 class MAIN:
@@ -266,6 +277,8 @@ ink_red = (204,0,0)
 
 # sounds
 page_flip = pygame.mixer.Sound('SFX/page flip.mp3')
+gun_shot = pygame.mixer.Sound('SFX/gun-shot.mp3')
+empty_gun_shot = pygame.mixer.Sound('SFX/empty gun shot.mp3')
 
 # main object 
 main = MAIN()
@@ -346,12 +359,20 @@ while True:
             pass
         elif main.page == 4:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN and main.play_game.player1_number_bullet > 0:
-                    main.player1.shot_bullets.append(main.player1.aim.copy())
-                    main.play_game.player1_number_bullet -= 1
-                if event.key == pygame.K_SPACE and main.play_game.player2_number_bullet > 0:
-                    main.player2.shot_bullets.append(main.player2.aim.copy())
-                    main.play_game.player2_number_bullet -= 1
+                if event.key == pygame.K_RETURN:
+                    if main.play_game.player1_number_bullet > 0:
+                        main.player1.shot_bullets.append(main.player1.aim.copy())
+                        main.play_game.player1_number_bullet -= 1
+                        gun_shot.play()
+                    else:
+                        empty_gun_shot.play()
+                if event.key == pygame.K_SPACE:
+                    if main.play_game.player2_number_bullet > 0:
+                        main.player2.shot_bullets.append(main.player2.aim.copy())
+                        main.play_game.player2_number_bullet -= 1
+                        gun_shot.play()
+                    else:
+                        empty_gun_shot.play()
                     
                 if event.key == pygame.K_d:
                     main.player2.aim.x = min(main.player2.aim.x+10, 750)
