@@ -221,7 +221,21 @@ class PLAY_GAME:
         self.player1_number_score = 0
         self.player2_number_score = 0
         self.page_flip.play()
+    def next(self):
+        main.page = 5
+        main.main_play.reset()
+        main.player1.shot_bullets.clear()
+        main.player2.shot_bullets.clear()
+        self.player1_number_bullet = 20
+        self.player2_number_bullet = 20
+        self.player1_number_score = 0
+        self.player2_number_score = 0
+        self.page_flip.play()
 
+class END_GAME:
+    def draw(self):
+        x = 10
+        
 class MAIN:
     def __init__(self):
         self.BG = pygame.image.load('Graphics/game BG.jpg')
@@ -231,6 +245,7 @@ class MAIN:
         self.controls = CONTROLS()
         self.main_play = MAIN_PLAY()
         self.play_game = PLAY_GAME()
+        self.end_game = END_GAME()
         ### page numbers: 0 = menu , 1 = name input , 2 = controls , 3 = leaderboard , 4 = game 
         self.page = 0
 
@@ -254,6 +269,10 @@ class MAIN:
         self.play_game.draw()
         self.player1.draw_shot()
         self.player2.draw_shot()  
+    
+    def draw_end_game(self):
+        self.draw_BG()
+        self.end_game.draw()
 
     
 # Initializing pygame and creating a screen
@@ -286,6 +305,7 @@ main = MAIN()
 
 p1_name = ''
 p2_name = ''
+winner = 0
     
 while True:
     mouse = pygame.mouse.get_pos()
@@ -358,7 +378,16 @@ while True:
 
         elif main.page == 3:
             pass
+        
         elif main.page == 4:
+            if main.play_game.player1_number_bullet == 0 and main.play_game.player2_number_bullet == 0:
+                if main.play_game.player1_number_score > main.play_game.player2_number_score:
+                    winner = 1
+                elif main.play_game.player1_number_score < main.play_game.player2_number_score:
+                    winner = 2
+                else:
+                    winner = 0
+                main.play_game.next()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     if main.play_game.player1_number_bullet > 0:
@@ -417,6 +446,9 @@ while True:
                 if event.key == pygame.K_ESCAPE:
                     main.play_game.back()
             main.draw_game()
+            
+        elif main.page == 5:
+            main.draw_end_game()
             
 
     pygame.display.update()
