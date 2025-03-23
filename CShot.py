@@ -9,7 +9,7 @@ class PLAYER:
 
     def randomize_aim(self):
         self.x = random.randint(50,750)
-        self.y = random.randint(150,480)
+        self.y = random.randint(150,465)
         self.aim = pygame.math.Vector2(self.x,self.y)
     
     def draw_shot(self):
@@ -161,6 +161,8 @@ class MAIN_PLAY:
         p2_name = ''
         
 class PLAY_GAME:
+    player1_number_bullet = 20
+    player2_number_bullet = 20
     def __init__(self):
         self.page_flip = page_flip
         self.b_font = font3
@@ -171,7 +173,7 @@ class PLAY_GAME:
         self.p1_score = self.p1_font.render("PLAYER 1 SCORE:", True, ink_red)
         self.p1_score_rect = self.p1_score.get_rect(center=(110, 100))
         self.p1_shot = self.p1_font.render("PLAYER 1 BULLETS:", True, ink_red)
-        self.p1_shot_rect = self.p1_shot.get_rect(center=(670, 100)) 
+        self.p1_shot_rect = self.p1_shot.get_rect(center=(670, 100))
         
         self.p2_font = font3
         self.p2_score = self.p2_font.render("PLAYER 2 SCORE:", True, ink_blue)
@@ -192,10 +194,21 @@ class PLAY_GAME:
         screen.blit(self.p2_score, self.p2_score_rect)
         screen.blit(self.p1_shot, self.p1_shot_rect)
         screen.blit(self.p2_shot, self.p2_shot_rect)
+        
+        p1_number_shot = self.p1_font.render(str(self.player1_number_bullet), True, "black")
+        p1_number_shot_rect = p1_number_shot.get_rect(center=(750, 100))
+        screen.blit(p1_number_shot, p1_number_shot_rect)
+        p2_number_shot = self.p2_font.render(str(self.player2_number_bullet), True, "black")
+        p2_number_shot_rect = p2_number_shot.get_rect(center=(750, 125))
+        screen.blit(p2_number_shot, p2_number_shot_rect)
 
     def back(self):
         main.page = 1
         main.main_play.reset()
+        main.player1.shot_bullets.clear()
+        main.player2.shot_bullets.clear()
+        self.player1_number_bullet = 20
+        self.player2_number_bullet = 20
         self.page_flip.play()
 
 class MAIN:
@@ -333,10 +346,30 @@ while True:
             pass
         elif main.page == 4:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    main.player1.shot_bullets.append(main.player1.aim.copy()) 
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_RETURN and main.play_game.player1_number_bullet > 0:
+                    main.player1.shot_bullets.append(main.player1.aim.copy())
+                    main.play_game.player1_number_bullet -= 1
+                if event.key == pygame.K_SPACE and main.play_game.player2_number_bullet > 0:
                     main.player2.shot_bullets.append(main.player2.aim.copy())
+                    main.play_game.player2_number_bullet -= 1
+                    
+                if event.key == pygame.K_d:
+                    main.player2.aim.x = min(main.player2.aim.x+10, 750)
+                if event.key == pygame.K_a:
+                    main.player2.aim.x = max(main.player2.aim.x-10, 50)
+                if event.key == pygame.K_w:
+                    main.player2.aim.y = max(main.player2.aim.y-10, 150)
+                if event.key == pygame.K_s:
+                    main.player2.aim.y = min(main.player2.aim.y+10, 465)
+                    
+                if event.key == pygame.K_RIGHT:
+                    main.player1.aim.x = min(main.player1.aim.x+10, 750) 
+                if event.key == pygame.K_LEFT:
+                    main.player1.aim.x = max(main.player1.aim.x-10, 50)
+                if event.key == pygame.K_UP:
+                    main.player1.aim.y = max(main.player1.aim.y-10, 150)
+                if event.key == pygame.K_DOWN:
+                    main.player1.aim.y = min(main.player1.aim.y+10, 465)
                     
                     
             if event.type == pygame.MOUSEBUTTONDOWN:
