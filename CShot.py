@@ -10,13 +10,64 @@ class PLAYER:
         self.score = 0
 
     def randomize_aim(self):
-        self.x = random.randint(50,750)
-        self.y = random.randint(150,465)
+        self.x = random.randint(50,756)
+        self.y = random.randint(150,470)
         self.aim = pygame.math.Vector2(self.x,self.y)
+
+    def shoot(self):
+        if self.bullet_no > 0:
+            self.shot_bullets.append(self.aim.copy())
+            self.bullet_no -= 1
+            gun_shot.play()
+        else:
+            empty_gun_shot.play() 
+    
+    def move_right(self):
+        if self.aim.x+10 > 756:
+            error_sound.play()
+        self.aim.x = min(self.aim.x+10, 756)
+
+    def move_left(self):
+        if self.aim.x-10 < 50:
+            error_sound.play()
+        self.aim.x = max(self.aim.x-10, 50)
+
+    def move_up(self):
+        if self.aim.y-10 < 150:
+            error_sound.play()
+        self.aim.y = max(self.aim.y-10, 150)
+    
+    def move_down(self):
+        if self.aim.y+10 > 470:
+            error_sound.play()
+        self.aim.y = min(self.aim.y+10, 470)    
     
     def draw_shot(self):
         for i in self.shot_bullets:
             screen.blit(self.bullet,i)
+
+class TARGET:
+    def __init__(self):
+        self.img = pygame.image.load("Graphics/focus.png")
+        self.randomize_pos()
+    
+    def randomize_pos(self):
+        self.x = random.randint(50,715)
+        self.y = random.randint(150,430)
+        self.pos = pygame.math.Vector2(self.x,self.y)
+        #if not self.spawn_check():
+        #    self.randomize_pos()
+
+    def spawn_check(self):
+        if ((self.x-8<main.player1.aim.x<self.x+49) and (self.y-8<main.player1.aim.x<self.x+49)):
+            return False
+        if ((self.x-8<main.player2.aim.x<self.x+49) and (self.y-8<main.player2.aim.x<self.x+49)):
+            return False
+        else:
+            return True
+        
+    def draw(self):
+        screen.blit(self.img, self.pos)
 
 class CONTROLS:
     def __init__(self):
@@ -280,6 +331,7 @@ class MAIN:
         self.main_play = MAIN_PLAY()
         self.play_game = PLAY_GAME()
         self.end_game = END_GAME()
+        self.target1 = TARGET()
         ### page numbers: 0 = menu , 1 = name input , 2 = controls , 3 = leaderboard , 4 = game , 5 = end game
         self.page = 0
 
@@ -302,7 +354,8 @@ class MAIN:
         self.draw_BG()
         self.play_game.draw()
         self.player1.draw_shot()
-        self.player2.draw_shot()  
+        self.player2.draw_shot()
+        self.target1.draw() 
     
     def draw_end_game(self):
         self.draw_BG()
@@ -416,53 +469,27 @@ while True:
         elif main.page == 4:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    if main.player1.bullet_no > 0:
-                        main.player1.shot_bullets.append(main.player1.aim.copy())
-                        main.player1.bullet_no -= 1
-                        gun_shot.play()
-                    else:
-                        empty_gun_shot.play()
+                    main.player1.shoot()
                 if event.key == pygame.K_SPACE:
-                    if main.player2.bullet_no > 0:
-                        main.player2.shot_bullets.append(main.player2.aim.copy())
-                        main.player2.bullet_no -= 1
-                        gun_shot.play()
-                    else:
-                        empty_gun_shot.play()
+                    main.player2.shoot()
                     
                 if event.key == pygame.K_d:
-                    if main.player2.aim.x+10 > 750:
-                        error_sound.play()
-                    main.player2.aim.x = min(main.player2.aim.x+10, 750)
+                    main.player2.move_right()
                 if event.key == pygame.K_a:
-                    if main.player2.aim.x-10 < 50:
-                        error_sound.play()
-                    main.player2.aim.x = max(main.player2.aim.x-10, 50)
+                    main.player2.move_left()
                 if event.key == pygame.K_w:
-                    if main.player2.aim.y-10 < 150:
-                        error_sound.play()
-                    main.player2.aim.y = max(main.player2.aim.y-10, 150)
+                    main.player2.move_up()
                 if event.key == pygame.K_s:
-                    if main.player2.aim.y+10 > 465:
-                        error_sound.play()
-                    main.player2.aim.y = min(main.player2.aim.y+10, 465)
+                    main.player2.move_down()
                     
                 if event.key == pygame.K_RIGHT:
-                    if main.player1.aim.x+10 > 750:
-                        error_sound.play()
-                    main.player1.aim.x = min(main.player1.aim.x+10, 750) 
+                    main.player1.move_right()
                 if event.key == pygame.K_LEFT:
-                    if main.player1.aim.x-10 < 50:
-                        error_sound.play()
-                    main.player1.aim.x = max(main.player1.aim.x-10, 50)
+                    main.player1.move_left()
                 if event.key == pygame.K_UP:
-                    if main.player1.aim.y-10 < 150:
-                        error_sound.play()
-                    main.player1.aim.y = max(main.player1.aim.y-10, 150)
+                    main.player1.move_up()
                 if event.key == pygame.K_DOWN:
-                    if main.player1.aim.y+10 > 465:
-                        error_sound.play()
-                    main.player1.aim.y = min(main.player1.aim.y+10, 465)
+                    main.player1.move_down()
                     
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if main.play_game.b_rect.collidepoint(mouse):
