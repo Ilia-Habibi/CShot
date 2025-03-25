@@ -6,6 +6,7 @@ class PLAYER:
         self.randomize_aim()
         self.bullet = pygame.image.load('Graphics/red.png') if player_no == 1 else pygame.image.load('Graphics/blue.png')
         self.shot_bullets = []
+        self.target_hits = []
         self.bullet_no = 20
         self.score = 0
 
@@ -19,8 +20,50 @@ class PLAYER:
             self.shot_bullets.append(self.aim.copy())
             self.bullet_no -= 1
             gun_shot.play()
+            match (self.check_hit()):
+                case 0:
+                    return
+                case 1:
+                    self.calc_score()
+                    main.target1.randomize_pos()
+                case 2:
+                    self.calc_score()
+                    main.target2.randomize_pos()
+                case 3:
+                    self.calc_score()
+                    main.target3.randomize_pos()
         else:
-            empty_gun_shot.play() 
+            empty_gun_shot.play()
+
+    def check_hit(self):
+        if ((main.target1.x-7<self.shot_bullets[-1].x<main.target1.x+48) and ((main.target1.y-8<self.shot_bullets[-1].y<main.target1.y+48))):
+            return 1
+        if ((main.target2.x-7<self.shot_bullets[-1].x<main.target2.x+48) and ((main.target2.y-8<self.shot_bullets[-1].y<main.target2.y+48))):
+            return 2
+        if ((main.target3.x-7<self.shot_bullets[-1].x<main.target3.x+48) and ((main.target3.y-8<self.shot_bullets[-1].y<main.target3.y+48))):
+            return 3
+        else:
+            return 0
+        
+    def calc_score(self):
+        self.target_hits.append(self.shot_bullets[-1].copy())
+        if len(self.shot_bullets) == 1:
+            self.score += 1
+        else:
+            distance = (self.shot_bullets[-1]-self.shot_bullets[-2]).length()
+            if distance<150:
+                self.score += 1
+            elif distance<300:
+                self.score += 2
+            elif distance<450:
+                self.score += 3
+            elif distance<600:
+                self.score += 4
+            else:
+                self.score += 5
+            if len(self.target_hits)>1:
+                if self.target_hits[-2] == self.shot_bullets[-2]:
+                    self.score += 2
     
     def move_right(self):
         if self.aim.x+10 > 756:
@@ -55,16 +98,6 @@ class TARGET:
         self.x = random.randint(50,715)
         self.y = random.randint(150,430)
         self.pos = pygame.math.Vector2(self.x,self.y)
-        #if not self.spawn_check():
-        #    self.randomize_pos()
-
-    def spawn_check(self):
-        if ((self.x-8<main.player1.aim.x<self.x+49) and (self.y-8<main.player1.aim.x<self.x+49)):
-            return False
-        if ((self.x-8<main.player2.aim.x<self.x+49) and (self.y-8<main.player2.aim.x<self.x+49)):
-            return False
-        else:
-            return True
         
     def draw(self):
         screen.blit(self.img, self.pos)
@@ -332,6 +365,8 @@ class MAIN:
         self.play_game = PLAY_GAME()
         self.end_game = END_GAME()
         self.target1 = TARGET()
+        self.target2 = TARGET()
+        self.target3 = TARGET()
         ### page numbers: 0 = menu , 1 = name input , 2 = controls , 3 = leaderboard , 4 = game , 5 = end game
         self.page = 0
 
@@ -355,7 +390,9 @@ class MAIN:
         self.play_game.draw()
         self.player1.draw_shot()
         self.player2.draw_shot()
-        self.target1.draw() 
+        self.target1.draw()
+        self.target2.draw()
+        self.target3.draw()
     
     def draw_end_game(self):
         self.draw_BG()
