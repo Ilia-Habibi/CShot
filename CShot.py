@@ -1,11 +1,14 @@
-import pygame,random
+import pygame,random,time,threading
 from sys import exit
-import time
 
 class PLAYER:
     def __init__(self,player_no):
         self.bullet = pygame.image.load('Graphics/red.png') if player_no == 1 else pygame.image.load('Graphics/blue.png')
         self.set_vars()
+
+    def thread(self):
+        self.m_thread = threading.Thread(target=self.temporary_multiplication)
+        self.m_thread.start()
         
     def set_vars(self):
         self.shot_bullets = []
@@ -15,6 +18,7 @@ class PLAYER:
         self.time = 60
         self.countdown = 60
         self.randomize_aim()
+        self.multiple = False
 
     def randomize_aim(self):
         self.x = random.randint(50,756)
@@ -38,8 +42,25 @@ class PLAYER:
                 case 3:
                     self.calc_score()
                     main.target3.randomize_pos()
+                case 4:
+                    self.target_hits.append(self.shot_bullets[-1].copy())
+                    self.thread()
+                    main.st1.reset()
+                case 5:
+                    self.target_hits.append(self.shot_bullets[-1].copy())
+                    self.bullet_no += 5
+                    main.st2.reset()
+                case 6:
+                    self.target_hits.append(self.shot_bullets[-1].copy())
+                    self.countdown += 10
+                    main.st3.reset()
         else:
             empty_gun_shot.play()
+
+    def temporary_multiplication(self):
+        self.multiple = True
+        time.sleep(15)
+        self.multiple = False
 
     def check_hit(self):
         if ((main.target1.x-7<self.shot_bullets[-1].x<main.target1.x+48) and ((main.target1.y-8<self.shot_bullets[-1].y<main.target1.y+48))):
@@ -48,28 +69,35 @@ class PLAYER:
             return 2
         if ((main.target3.x-7<self.shot_bullets[-1].x<main.target3.x+48) and ((main.target3.y-8<self.shot_bullets[-1].y<main.target3.y+48))):
             return 3
+        if ((main.st1.x-7<self.shot_bullets[-1].x<main.st1.x+48) and ((main.st1.y-8<self.shot_bullets[-1].y<main.st1.y+48))):
+            return 4
+        if ((main.st2.x-7<self.shot_bullets[-1].x<main.st2.x+48) and ((main.st2.y-8<self.shot_bullets[-1].y<main.st2.y+48))):
+            return 5
+        if ((main.st3.x-7<self.shot_bullets[-1].x<main.st3.x+48) and ((main.st3.y-8<self.shot_bullets[-1].y<main.st3.y+48))):
+            return 6
         else:
             return 0
         
     def calc_score(self):
         self.target_hits.append(self.shot_bullets[-1].copy())
+        multiplier = 2 if self.multiple else 1
         if len(self.shot_bullets) == 1:
-            self.score += 1
+            self.score += 1 * multiplier
         else:
             distance = (self.shot_bullets[-1]-self.shot_bullets[-2]).length()
             if distance<150:
-                self.score += 1
+                self.score += 1 * multiplier
             elif distance<300:
-                self.score += 2
+                self.score += 2 * multiplier
             elif distance<450:
-                self.score += 3
+                self.score += 3 * multiplier
             elif distance<600:
-                self.score += 4
+                self.score += 4 * multiplier
             else:
-                self.score += 5
+                self.score += 5 * multiplier
             if len(self.target_hits)>1:
                 if self.target_hits[-2] == self.shot_bullets[-2]:
-                    self.score += 2
+                    self.score += 2 * multiplier
     
     def move_right(self):
         if self.aim.x+10 > 756:
@@ -107,6 +135,24 @@ class TARGET:
         
     def draw(self):
         screen.blit(self.img, self.pos)
+
+class SPECIAL(TARGET):
+    def __init__(self, t_number):
+        super().__init__()
+        if t_number == 1:    
+            self.img = pygame.image.load("Graphics/2x.png")
+        elif t_number == 2:
+            self.img = pygame.image.load("Graphics/bullet.png")
+        elif t_number == 3:
+            self.img = pygame.image.load("Graphics/hourglass.png")
+        self.reset()
+    
+    def reset(self):
+        self.active = False
+        self.delay = random.randint(10,50)
+        self.randomize_pos()
+        self.start_time = time.time()
+        self.elapsed = 0
 
 class CONTROLS:
     def __init__(self):
@@ -245,6 +291,9 @@ class MAIN_PLAY:
             main.page = 4
             self.page_flip.play()
             main.start_time = time.time()
+            main.st1.reset()
+            main.st2.reset()
+            main.st3.reset()
 
     def reset(self):
         global p1_name
@@ -384,6 +433,9 @@ class MAIN:
         self.target1 = TARGET()
         self.target2 = TARGET()
         self.target3 = TARGET()
+        self.st1 = SPECIAL(1)
+        self.st2 = SPECIAL(2)
+        self.st3 = SPECIAL(3)
         self.start_time = time.time()
         ### page numbers: 0 = menu , 1 = name input , 2 = controls , 3 = leaderboard , 4 = game , 5 = end game
         self.page = 0
@@ -408,6 +460,12 @@ class MAIN:
         self.play_game.draw()
         self.player1.draw_shot()
         self.player2.draw_shot()
+        if self.st3.active:
+            self.st3.draw()
+        if self.st2.active:
+            self.st2.draw()
+        if self.st1.active:
+            self.st1.draw()
         self.target1.draw()
         self.target2.draw()
         self.target3.draw()
@@ -420,6 +478,15 @@ class MAIN:
         elapsed_time = time.time() - self.start_time
         self.player1.time = int(max(self.player1.countdown - elapsed_time, 0))
         self.player2.time = int(max(self.player2.countdown - elapsed_time, 0))
+        self.st1.elapsed = time.time() - self.st1.start_time
+        self.st2.elapsed = time.time() - self.st2.start_time
+        self.st3.elapsed = time.time() - self.st3.start_time
+        if self.st1.elapsed >= self.st1.delay:
+            self.st1.active = True
+        if self.st2.elapsed >= self.st2.delay:
+            self.st2.active = True
+        if self.st3.elapsed >= self.st3.delay:
+            self.st3.active = True
 
 p1_name = ""
 p2_name = ""
