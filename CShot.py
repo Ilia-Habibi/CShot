@@ -5,11 +5,8 @@ class PLAYER:
     def __init__(self,player_no):
         self.bullet = pygame.image.load('Graphics/red.png') if player_no == 1 else pygame.image.load('Graphics/blue.png')
         self.set_vars()
-
-    def thread(self):
-        self.m_thread = threading.Thread(target=self.temporary_multiplication)
-        self.m_thread.start()
         
+    # setting and resetting attributes
     def set_vars(self):
         self.shot_bullets = []
         self.target_hits = []
@@ -61,19 +58,24 @@ class PLAYER:
         self.multiple = True
         time.sleep(15)
         self.multiple = False
+    
+    # making a parallel thread for multiplication time 
+    def thread(self):
+        self.m_thread = threading.Thread(target=self.temporary_multiplication)
+        self.m_thread.start()
 
     def check_hit(self):
-        if ((main.target1.x-7<self.shot_bullets[-1].x<main.target1.x+48) and ((main.target1.y-8<self.shot_bullets[-1].y<main.target1.y+48))):
+        if ((main.target1.x-7<self.shot_bullets[-1].x<main.target1.x+48) and (main.target1.y-8<self.shot_bullets[-1].y<main.target1.y+48)):
             return 1
-        if ((main.target2.x-7<self.shot_bullets[-1].x<main.target2.x+48) and ((main.target2.y-8<self.shot_bullets[-1].y<main.target2.y+48))):
+        if ((main.target2.x-7<self.shot_bullets[-1].x<main.target2.x+48) and (main.target2.y-8<self.shot_bullets[-1].y<main.target2.y+48)):
             return 2
-        if ((main.target3.x-7<self.shot_bullets[-1].x<main.target3.x+48) and ((main.target3.y-8<self.shot_bullets[-1].y<main.target3.y+48))):
+        if ((main.target3.x-7<self.shot_bullets[-1].x<main.target3.x+48) and (main.target3.y-8<self.shot_bullets[-1].y<main.target3.y+48)):
             return 3
-        if ((main.st1.x-7<self.shot_bullets[-1].x<main.st1.x+48) and ((main.st1.y-8<self.shot_bullets[-1].y<main.st1.y+48))):
+        if ((main.st1.x-7<self.shot_bullets[-1].x<main.st1.x+48) and (main.st1.y-8<self.shot_bullets[-1].y<main.st1.y+48) and main.st1.active):
             return 4
-        if ((main.st2.x-7<self.shot_bullets[-1].x<main.st2.x+48) and ((main.st2.y-8<self.shot_bullets[-1].y<main.st2.y+48))):
+        if ((main.st2.x-7<self.shot_bullets[-1].x<main.st2.x+48) and (main.st2.y-8<self.shot_bullets[-1].y<main.st2.y+48) and main.st2.active):
             return 5
-        if ((main.st3.x-7<self.shot_bullets[-1].x<main.st3.x+48) and ((main.st3.y-8<self.shot_bullets[-1].y<main.st3.y+48))):
+        if ((main.st3.x-7<self.shot_bullets[-1].x<main.st3.x+48) and (main.st3.y-8<self.shot_bullets[-1].y<main.st3.y+48) and main.st3.active):
             return 6
         else:
             return 0
@@ -136,6 +138,7 @@ class TARGET:
     def draw(self):
         screen.blit(self.img, self.pos)
 
+# special items class
 class SPECIAL(TARGET):
     def __init__(self, t_number):
         super().__init__()
@@ -154,6 +157,7 @@ class SPECIAL(TARGET):
         self.start_time = time.time()
         self.elapsed = 0
 
+# controls page
 class CONTROLS:
     def __init__(self):
         self.enter = pygame.image.load("Graphics/enter.PNG")
@@ -300,7 +304,8 @@ class MAIN_PLAY:
         global p2_name
         p1_name = ''
         p2_name = ''
-        
+
+# game page        
 class PLAY_GAME:
     def __init__(self):
         self.page_flip = page_flip
@@ -375,6 +380,7 @@ class PLAY_GAME:
         main.main_play.reset()
         self.win_sound.play()       
 
+# winner page
 class END_GAME:
     def __init__(self):
         self.page_flip = page_flip
